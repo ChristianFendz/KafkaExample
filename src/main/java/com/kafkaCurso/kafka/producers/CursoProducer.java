@@ -32,7 +32,7 @@ public class CursoProducer {
 			for (int i = 0; i < 1000000; i++) {
 
 				msm = "TEST3-" + i;
-				// EL metodo get se encarga de decir que sea sincorna los envios de mesanjes
+				// EL metodo get se encarga de decir que sea sincroniza los envios de mesanjes
 				// .get() quitar para que sea asincrono
 				producer.send(new ProducerRecord<>("TutorialTopic", "key", msm));
 

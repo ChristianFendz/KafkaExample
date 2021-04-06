@@ -1,4 +1,4 @@
-package com.kafkaCurso.kafka.consumer;
+package com.kafkaCurso.kafka.transactional;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -10,8 +10,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CursoConsumer {
-	public static final Logger log = LoggerFactory.getLogger(CursoConsumer.class);
+public class TransactionalConsumer {
+	public static final Logger log = LoggerFactory.getLogger(TransactionalConsumer.class);
 
 	public static void main(String[] args) {
 
@@ -22,19 +22,6 @@ public class CursoConsumer {
 		// Hace commit a los registros leidos
 		props.setProperty("enable.auto.commit", "true");
 		// cada que tiempo hace commit
-		/*
-		 * Traer todos los mensajes que se realizaron commit.
-		 * 
-		 * 
-		 * Si hay algún error los mensajes se encontrarán en el topic pero como
-		 * read_uncommitted.
-		 * 
-		 * 
-		 * Si no hay ningún error, los mensajes en el topic pasarán de read_uncommitted
-		 * a read_committed y serán leidos por el consumer.
-		 */
-		props.setProperty("isolation.level", "read_committed");
-
 		props.setProperty("auto.commit.interval.ms", "1000");
 		props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -44,8 +31,8 @@ public class CursoConsumer {
 			while (true) {
 				ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(100));
 				for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-					log.info("offset = {}, partition = {}, key = {}, value = {}", consumerRecord.offset(),
-							consumerRecord.partition(), consumerRecord.key(), consumerRecord.value());
+					log.info("offset = {}, partition = {}, key = {}, value = {}", consumerRecord.offset(), consumerRecord.partition(), consumerRecord.key (),
+							consumerRecord.value());
 				}
 			}
 		} finally {
