@@ -2,11 +2,9 @@ package com.kafkaCurso.kafka.callbacks;
 
 import java.util.Properties;
 
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * Controla que el mensaje fue enviado con exito y que no exista error.
  * 
  * Se puede utilizar para realziar alguna accion cuando se complete el mensaje
+ * 
  * @author christian
  *
  */
@@ -34,15 +33,26 @@ public class IcienciaCallBackProducer {
 		try (Producer<String, String> producer = new KafkaProducer<>(props);) {
 			for (int i = 0; i < 1000; i++) {
 				msm = "TEST3-" + i;
-				producer.send(new ProducerRecord<>("TutorialTopic", String.valueOf(i), msm), new Callback() {
-					@Override
-					public void onCompletion(RecordMetadata metadata, Exception exception) {
-						if(exception != null ) {
-							log.info("There was an error {}",exception.getMessage()	);
-						}
-						log.info("Offset = {}, partition = {}, topic = {} ", metadata.offset(),metadata.partition(), metadata.topic());
+				// Utilizando clase anonima
+//				producer.send(new ProducerRecord<>("TutorialTopic", String.valueOf(i), msm), new Callback() {
+//					@Override
+//					public void onCompletion(RecordMetadata metadata, Exception exception) {
+//						if(exception != null ) {
+//							log.info("There was an error {}",exception.getMessage()	);
+//						}
+//						log.info("Offset = {}, partition = {}, topic = {} ", metadata.offset(),metadata.partition(), metadata.topic());
+//					}
+//				});
+
+				// utilizando lambdas
+				producer.send(new ProducerRecord<>("TutorialTopic", String.valueOf(i), msm), (metadata, exception) -> {
+					if (exception != null) {
+						log.info("There was an error {}", exception.getMessage());
 					}
+					log.info("Offset = {}, partition = {}, topic = {} ", metadata.offset(), metadata.partition(),
+							metadata.topic());
 				});
+
 			}
 			producer.flush();
 		}
